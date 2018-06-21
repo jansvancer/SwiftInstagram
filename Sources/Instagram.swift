@@ -70,13 +70,7 @@ public class Instagram {
                       success: EmptySuccessHandler?,
                       failure: FailureHandler?) {
 
-        var navigationController: UINavigationController
-        if controller == nil {
-            guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { failure?(InstagramError.missingRootViewController); return }
-            navigationController = UINavigationController(rootViewController: rootVC)
-        } else {
-            navigationController = controller!
-        }
+        var navigationController: UINavigationController!
 
         guard client != nil else { failure?(InstagramError.missingClientIdOrRedirectURI); return }
 
@@ -99,8 +93,10 @@ public class Instagram {
         }, failure: failure)
 
         if controller == nil {
+            navigationController = UINavigationController(rootViewController: vc)
             navigationController.show(vc, sender: nil)
         } else {
+            navigationController = controller!
             navigationController.present(vc, animated: true, completion: nil)
         }
     }
