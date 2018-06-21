@@ -98,7 +98,7 @@ class InstagramLoginViewController: UIViewController {
     }
 
     private func progressViewChangeHandler<Value>(webView: WKWebView, change: NSKeyValueObservedChange<Value>) {
-        progressView.alpha = 1.0
+        /*progressView.alpha = 1.0
         progressView.setProgress(Float(webView.estimatedProgress), animated: true)
 
         if webView.estimatedProgress >= 1.0 {
@@ -107,7 +107,7 @@ class InstagramLoginViewController: UIViewController {
             }, completion: { (_ finished) in
                 self.progressView.progress = 0
             })
-        }
+        }*/
     }
 
 }
