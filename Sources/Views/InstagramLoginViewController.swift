@@ -49,7 +49,7 @@ class InstagramLoginViewController: UIViewController {
         }
 
         // Initializes progress view
-        setupProgressView()
+        //setupProgressView()
 
         // Initializes web view
         let webView = setupWebView()
