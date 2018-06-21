@@ -65,17 +65,19 @@ public class Instagram {
     /// - parameter scopes: The scope of the access you are requesting from the user. Basic access by default.
     /// - parameter success: The callback called after a correct login.
     /// - parameter failure: The callback called after an incorrect login.
-    public func login(from controller: UIViewController?,
+    public func login(from controller: UINavigationController?,
                       withScopes scopes: [InstagramScope] = [.basic],
                       success: EmptySuccessHandler?,
                       failure: FailureHandler?) {
 
-        var controller = controller
+        var navigationController: UINavigationController
         if controller == nil {
-            controller = UIApplication.shared.keyWindow?.rootViewController
+            guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { failure?(InstagramError.missingRootViewController); return }
+            navigationController = UINavigationController(rootViewController: rootVC)
+        } else {
+            navigationController = controller!
         }
 
-        guard controller != nil else { failure?(InstagramError.missingRootViewController); return }
         guard client != nil else { failure?(InstagramError.missingClientIdOrRedirectURI); return }
 
         let authURL = buildAuthURL(scopes: scopes)
@@ -86,20 +88,20 @@ public class Instagram {
                 return
             }
 
-            if let navigationController = controller as? UINavigationController {
+            if controller == nil {
                 navigationController.popViewController(animated: true)
                 success?()
             } else {
-                controller?.dismiss(animated: true, completion: {
+                navigationController.dismiss(animated: true, completion: {
                     success?()
                 })
             }
         }, failure: failure)
 
-        if let navigationController = controller as? UINavigationController {
+        if controller == nil {
             navigationController.show(vc, sender: nil)
         } else {
-            controller?.present(vc, animated: true, completion: nil)
+            navigationController.present(vc, animated: true, completion: nil)
         }
     }
 
