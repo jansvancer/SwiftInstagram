@@ -65,11 +65,17 @@ public class Instagram {
     /// - parameter scopes: The scope of the access you are requesting from the user. Basic access by default.
     /// - parameter success: The callback called after a correct login.
     /// - parameter failure: The callback called after an incorrect login.
-    public func login(from controller: UINavigationController,
+    public func login(from controller: UIViewController?,
                       withScopes scopes: [InstagramScope] = [.basic],
                       success: EmptySuccessHandler?,
                       failure: FailureHandler?) {
 
+        var controller = controller
+        if controller == nil {
+            controller = UIApplication.shared.keyWindow?.rootViewController
+        }
+
+        guard controller != nil else { failure?(InstagramError.missingRootViewController); return }
         guard client != nil else { failure?(InstagramError.missingClientIdOrRedirectURI); return }
 
         let authURL = buildAuthURL(scopes: scopes)
@@ -80,11 +86,21 @@ public class Instagram {
                 return
             }
 
-            controller.popViewController(animated: true)
-            success?()
+            if let navigationController = controller as? UINavigationController {
+                navigationController.popViewController(animated: true)
+                success?()
+            } else {
+                controller?.dismiss(animated: true, completion: {
+                    success?()
+                })
+            }
         }, failure: failure)
 
-        controller.show(vc, sender: nil)
+        if let navigationController = controller as? UINavigationController {
+            navigationController.show(vc, sender: nil)
+        } else {
+            controller?.present(vc, animated: true, completion: nil)
+        }
     }
 
     private func buildAuthURL(scopes: [InstagramScope]) -> URL {

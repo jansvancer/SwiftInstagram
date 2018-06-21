@@ -23,4 +23,6 @@ public enum InstagramError: Error {
 
     /// The client id or the redirect URI is missing inside the Info.plist file
     case missingClientIdOrRedirectURI
+
+    case missingRootViewController
 }
