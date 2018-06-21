@@ -83,21 +83,22 @@ public class Instagram {
             }
 
             if controller == nil {
-                navigationController.popViewController(animated: true)
-                success?()
-            } else {
                 navigationController.dismiss(animated: true, completion: {
                     success?()
                 })
+            } else {
+                navigationController.popViewController(animated: true)
+                success?()
             }
         }, failure: failure)
 
         if controller == nil {
             navigationController = UINavigationController(rootViewController: vc)
-            navigationController.show(vc, sender: nil)
+            guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { failure?(InstagramError.missingRootViewController); return }
+            rootVC.present(navigationController, animated: true, completion: nil)
         } else {
             navigationController = controller!
-            navigationController.present(vc, animated: true, completion: nil)
+            navigationController.show(vc, sender: nil)
         }
     }
 
